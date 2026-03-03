@@ -8,8 +8,6 @@
 // Module Name: sub_proc
 // Project Name: 
 // Target Devices: 
-// Tool Versions: 
-// Description: 
 // 
 // Dependencies: 
 // 
@@ -26,10 +24,11 @@ module sub_proc(
     output [31:0] Q,
     output cout
     );
-    wire [32 : 0] q_temp;
-    wire [31:0] out_temp;
-    cla_32bit cla(X,~Y,1,q_temp[31:0],q_temp[32]);
-    mux_2_1 mu(q_temp[31:0],{X,X_shift},q_temp[31],out_temp);
-    assign cout = ~q_temp[31];
-    assign Q = out_temp;
+    wire [31:0] shifted_x;
+    assign shifted_x = {X[30:0], X_shift};
+    wire [31:0] sub_result;
+    assign sub_result = shifted_x - Y;
+
+    assign cout = ~sub_result[31];
+    assign Q = sub_result[31] ? shifted_x : sub_result;
 endmodule
