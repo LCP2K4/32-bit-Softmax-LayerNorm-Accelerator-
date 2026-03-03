@@ -70,13 +70,13 @@ architecture Behavioral of datapath is
            o : out STD_LOGIC);
       end component;
       
-      component divider
-      port (  clk   : in  std_logic;
-              reset : in  std_logic;
+      component fast_divider
+      port (  X     : in  std_logic_vector(31 downto 0);
+              Y     : in  std_logic_vector(31 downto 0);
+              clk   : in  std_logic;
+              rs : in  std_logic;
               start : in  std_logic;
-              A     : in  std_logic_vector(31 downto 0);
-              B     : in  std_logic_vector(31 downto 0);
-              O     : out std_logic_vector(31 downto 0);
+              Q     : out std_logic_vector(31 downto 0);
               done  : out std_logic);
        end component;
        
@@ -113,7 +113,7 @@ begin
 N_FLG : nt_0 port map (A,clk,reset,n_flag_temp);    
 X_MUX : mux_2_1 port map (A,shift_temp,x_sel,mux_temp);
 X_REG : reg port map (mux_temp,x_ld,reset,clk,x_temp);
-div : divider port map(clk, reset,div_ld ,A, x_temp, div_temp, div_flag);
+div : fast_divider port map(A, x_temp, clk, reset,div_ld , div_temp, div_flag);
 --div : CLA_32bit port map (A,x_temp,'0',div_temp,test);
 DIV_REG : reg port map (div_temp,temp_ld,reset,clk,div_temp_reg);
 add : CLA_32bit port map (div_temp_reg,x_temp,'0',add_temp,cout_temp);
