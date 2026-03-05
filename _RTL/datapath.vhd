@@ -35,6 +35,8 @@ entity datapath is
     Port ( A : in STD_LOGIC_VECTOR (31 downto 0);
            clk : in STD_LOGIC;
            reset : in STD_LOGIC;
+           mode : in STD_LOGIC;
+           input_ld : in STD_LOGIC;
            x_sel : in STD_LOGIC;
            x_ld : in STD_LOGIC;
            out_ld : in STD_LOGIC;
@@ -96,31 +98,34 @@ architecture Behavioral of datapath is
          end component;
          
          signal n_flag_temp : std_logic;
-         signal add_temp: std_logic_vector(31 downto 0);
+         signal add_in, add_temp: std_logic_vector(31 downto 0);
          signal Cout_temp: std_logic;
-         signal x_temp: std_logic_vector(31 downto 0);
-         signal mux_temp: std_logic_vector(31 downto 0);
-         signal div_temp, div_temp_reg: std_logic_vector(31 downto 0);
+         signal x_temp, input_temp: std_logic_vector(31 downto 0);
+         signal x_in: std_logic_vector(31 downto 0);
+         signal div_in, div_out, div_temp: std_logic_vector(31 downto 0);
          signal before_shift : std_logic_vector (32 downto 0);
          signal shift_temp: std_logic_vector(31 downto 0);
          signal o_neg : std_logic_vector(31 downto 0) := (others => '1');
-         signal o_temp : std_logic_vector (31 downto 0) := (others => '0');
+         signal o_temp,o_signed : std_logic_vector (31 downto 0) := (others => '0');
          signal o_tb : std_logic_vector (31 downto 0);
 begin
 
 
 
 N_FLG : nt_0 port map (A,clk,reset,n_flag_temp);    
-X_MUX : mux_2_1 port map (A,shift_temp,x_sel,mux_temp);
-X_REG : reg port map (mux_temp,x_ld,reset,clk,x_temp);
-div : fast_divider port map(A, x_temp, clk, reset,div_ld , div_temp, div_flag);
---div : CLA_32bit port map (A,x_temp,'0',div_temp,test);
-DIV_REG : reg port map (div_temp,temp_ld,reset,clk,div_temp_reg);
-add : CLA_32bit port map (div_temp_reg,x_temp,'0',add_temp,cout_temp);
+X_MUX : mux_2_1 port map (A,shift_temp,x_sel,x_in);
+INPUT_REG : reg port map (A,input_ld,reset,clk,input_temp);
+X_REG : reg port map (x_in,x_ld,reset,clk,x_temp);
+INPUT_MUX : mux_2_1 port map (x"04000000",input_temp,mode,div_in);
+div : fast_divider port map(div_in, x_temp, clk, reset,div_ld , div_out, div_flag);
+DIVIDER_REG : reg port map (div_out,temp_ld,reset,clk,div_temp);
+ADD_MUX : mux_2_1 port map (x"00000000",x_temp,mode,add_in);
+add : CLA_32bit port map (div_temp,add_in,'0',add_temp,cout_temp);
 before_shift <= (cout_temp & add_temp);
 shift_temp <= before_shift(32 downto 1);
-OUT_MUX : mux_2_1 port map (shift_temp,o_neg,n_flag_temp,o_temp);
-OUT_REG : reg port map (o_temp, out_ld,reset , clk,o_tb);
+SiGNED_MUX :  mux_2_1 port map (shift_temp,o_neg,n_flag_temp,o_signed);
+OUT_MUX : mux_2_1 port map (add_temp,o_signed,mode,o_temp);
+OUT_REG : reg port map (o_temp, out_ld,reset,clk,o_tb);
 compare : cnt_comp port map (clk,reset, cnt_ld,gt_4);
 n_flag <= n_flag_temp;
 o <= o_tb;
