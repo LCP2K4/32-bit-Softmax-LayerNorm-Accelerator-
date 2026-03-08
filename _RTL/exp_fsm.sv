@@ -21,8 +21,8 @@
 
 
 module exp_fsm(
-    input start, check, clk, rs,
-    output reg rs_dp,x_ld, w_ld, b_ld,start_mul_ld ,mul_ld,exp_ld,
+    input start, clk, rs,
+    output reg rs_dp,x_ld, w_ld, b_ld ,mul_ld,exp_ld,
     output reg done
     );
     typedef enum {IDLE, START, LOAD, CAL, OUT, DONE_S} state_e;
@@ -36,7 +36,6 @@ module exp_fsm(
             IDLE: begin
                 {rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld} = 6'b100000;
                 done = 1'b0;
-                start_mul_ld = 1'b0;
                 next_state = START;
             end
             START: begin
@@ -48,16 +47,8 @@ module exp_fsm(
                 next_state = CAL;
             end
             CAL: begin
-                
-                if(check) begin
-                    {rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld} = 6'b000010;
-                    next_state = OUT;
-                end
-                else begin
-                     {rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld} = 6'b000000;
-                     start_mul_ld = 1'b1;
-                     next_state = CAL;
-                end
+            {rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld} = 6'b000010;
+             next_state = OUT;
             end
             OUT: begin
                 {rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld} = 6'b000001;
