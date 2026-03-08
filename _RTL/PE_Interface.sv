@@ -26,7 +26,7 @@ module PE_Interface#(parameter N = 32)(
     output [N - 1 : 0] Pe_out,
     output done
     );
-    wire rs_dp,x_ld,w_ld,b_ld,mul_ld,start_mul_ld,exp_ld,check;
-    PE_datapath #(N) pe(X,clk,rs_dp,x_ld,w_ld,b_ld,start_mul_ld,mul_ld,exp_ld,Pe_out,check);
-    exp_fsm exp(start,check,clk,rs,rs_dp,x_ld,w_ld,b_ld,start_mul_ld,mul_ld,exp_ld, done);
+    wire rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld;
+    PE_datapath #(N) pe(X,clk,rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld,Pe_out);
+    exp_fsm exp(start,clk,rs,rs_dp,x_ld,w_ld,b_ld,mul_ld,exp_ld, done);
 endmodule
