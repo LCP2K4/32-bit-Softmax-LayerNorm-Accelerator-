@@ -103,8 +103,8 @@ module Exp_Mem #(parameter N = 32)(
                 b = 32'h80000000;
            end
            default : begin
-                w = 32'h7fffffff;
-                b = 32'h80000000;    
+                w = 32'h00000000;
+                b = 32'h00000000;    
             end
         endcase
     end

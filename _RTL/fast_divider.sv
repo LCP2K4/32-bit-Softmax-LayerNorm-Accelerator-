@@ -14,7 +14,7 @@ module fast_divider(
     //---------------------------------------
     // Internal signals
     //---------------------------------------
-    wire [31:0] out_temp [0:15];
+    wire [31:0] out_temp [0:17];
     wire [31:0] reg_temp [0:4];
     wire [31:0] q_bit;
 
@@ -67,7 +67,9 @@ module fast_divider(
     // Last bit
     //---------------------------------------
     sub_proc s50(reg_temp[4], y_extended, x_extended[15], out_temp[15], q_bit[16]);
-    assign q_bit[15:0] = 16'b0;
+    sub_proc s51(out_temp[15], y_extended, x_extended[14], out_temp[16], q_bit[15]);
+    sub_proc s52(out_temp[16], y_extended, x_extended[13], out_temp[17], q_bit[14]);
+    assign q_bit[13:0] = 16'b0;
     //---------------------------------------
     // Output
     //---------------------------------------
