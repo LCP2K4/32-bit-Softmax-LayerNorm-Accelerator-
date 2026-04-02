@@ -26,9 +26,9 @@ module sub_proc(
     );
     wire [31:0] shifted_x;
     assign shifted_x = {X[30:0], X_shift};
-    wire [31:0] sub_result;
-    assign sub_result = shifted_x - Y;
+    wire [32:0] sub_result;
+    assign sub_result = {1'b0, shifted_x} + {1'b0, ~Y} + 1'b1;
 
-    assign cout = ~sub_result[31];
+    assign cout = sub_result[32];
     assign Q = sub_result[31] ? shifted_x : sub_result;
 endmodule

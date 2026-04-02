@@ -30,7 +30,31 @@ module Exp_Mem #(parameter N = 32)(
     reg [N - 1 : 0] b = 32'b0;
     always @(*) begin
         case(Exp_Mem_Input [N - 1 : N - 6])
+           6'b110000:  begin
+                w = 32'h00000000;
+                b = 32'h00000000;
+           end
+           6'b110001:  begin
+                w = 32'h00000000;
+                b = 32'h00000000;
+           end
+           6'b110010:  begin
+                w = 32'h00000001;
+                b = 32'h00000016;
+           end
+           6'b110011:  begin
+                w = 32'h00000004;
+                b = 32'h00000037;
+           end
            6'b110100:  begin
+                w = 32'h0000000b;
+                b = 32'h0000008b;
+           end
+           6'b110101:  begin
+                w = 32'h0000001e;
+                b = 32'h0000015d;
+           end
+           6'b110110:  begin
                 w = 32'h00000052;
                 b = 32'h00000362;
            end
@@ -104,7 +128,7 @@ module Exp_Mem #(parameter N = 32)(
            end
            default : begin
                 w = 32'h00000000;
-                b = 32'h00000000;    
+                b = 32'h00000001;    
             end
         endcase
     end
